@@ -4,10 +4,21 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      dotnet-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     open-pull-requests-limit: 5
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      actions-all:
+        patterns:
+          - "*"
     open-pull-requests-limit: 5

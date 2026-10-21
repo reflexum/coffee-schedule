@@ -1,8 +1,20 @@
 name: Новая функциональность (Feature request)
 description: Предложить новую функцию, модуль или улучшение архитектуры
 title: "feat: "
-labels: ["track:schedule"]
 body:
+  - type: dropdown
+    id: track
+    attributes:
+      label: Направление (Track)
+      description: Выберите функциональную область проекта.
+      options:
+        - "track:schedule (Расписание и смены)"
+        - "track:employees (Сотрудники, роли и заведения)"
+        - "track:swaps (Замена смен и пожелания)"
+        - "track:timesheet (Учёт часов и табель)"
+        - "track:release (Сборка, инфраструктура и деплой)"
+    validations:
+      required: false
   - type: textarea
     id: need
     attributes:
