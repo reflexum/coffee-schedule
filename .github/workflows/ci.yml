@@ -13,23 +13,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-      - name: Check solution
-        id: check_sln
-        run: |
-          if compgen -G "*.sln" > /dev/null || compgen -G "**/*.sln" > /dev/null; then
-            echo "has_sln=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_sln=false" >> $GITHUB_OUTPUT
-          fi
       - name: Restore
-        if: steps.check_sln.outputs.has_sln == 'true'
         run: dotnet restore
       - name: Build
-        if: steps.check_sln.outputs.has_sln == 'true'
         run: dotnet build --no-restore -c Release
       - name: Test
-        if: steps.check_sln.outputs.has_sln == 'true'
         run: dotnet test --no-build -c Release
       - name: Check formatting
-        if: steps.check_sln.outputs.has_sln == 'true'
         run: dotnet format --verify-no-changes --no-restore

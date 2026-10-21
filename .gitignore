@@ -1,4 +1,3 @@
-# .gitignore for .NET / C# and JetBrains / VS / VS Code
 bin/
 obj/
 *.user
@@ -6,13 +5,11 @@ obj/
 *.userosscache
 *.sln.docstates
 
-# Visual Studio
 .vs/
 .vscode/
 .idea/
 *.DotSettings.user
 
-# Build results
 [Dd]ebug/
 [Rr]elease/
 x64/
@@ -20,22 +17,18 @@ x86/
 build/
 Build/
 
-# Test results
 TestResults/
 coverage*.json
 coverage*.cobertura.xml
 
-# Logs & temp
 *.log
 logs/
 .temp/
 
-# Environment files
 .env
 .env.local
 appsettings.Development.local.json
 appsettings.Production.local.json
 
-# OS files
 .DS_Store
 Thumbs.db
