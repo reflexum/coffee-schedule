@@ -5,19 +5,32 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
+          cache: true
+
       - name: Restore
         run: dotnet restore
+
       - name: Build
         run: dotnet build --no-restore -c Release
+
       - name: Test
-        run: dotnet test --no-build -c Release
+        run: dotnet test --no-build -c Release --logger "console;verbosity=normal"
+
       - name: Check formatting
         run: dotnet format --verify-no-changes --no-restore

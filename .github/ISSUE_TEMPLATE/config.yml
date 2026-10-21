@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Регламент разработки
+    url: https://github.com/reflexum/coffee-schedule/blob/main/CONTRIBUTING.md
+    about: Инструкция по выбору задач, созданию веток и прохождению ревью.

@@ -1,0 +1,38 @@
+name: Новая функциональность (Feature request)
+description: Предложить новую функцию, модуль или улучшение архитектуры
+title: "feat: "
+labels: ["track:schedule"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Описание потребности
+      description: Какую бизнес- или техническую задачу решает данная функциональность?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Предлагаемое поведение
+      description: Как должна работать новая возможность (API-контракты, сценарии взаимодействия, сущности)?
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Критерии готовности (Definition of Done)
+      description: Список условий, при выполнении которых задача считается закрытой.
+      placeholder: |
+        - [ ] Реализованы эндпоинты ...
+        - [ ] Написаны тесты на сценарий ...
+        - [ ] Обновлена документация
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Зависимости и ограничения
+      description: Номера задач, без которых нельзя начать, или технические ограничения.
+      placeholder: "Зависит от: #... Нет — «—»"
+    validations:
+      required: false

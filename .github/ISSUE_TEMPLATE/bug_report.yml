@@ -1,0 +1,41 @@
+name: Ошибка (Bug report)
+description: Сообщить об ошибке или сбое в работе сервиса
+title: "fix: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Описание проблемы
+      description: Кратко опишите, что именно работает неправильно.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Шаги для воспроизведения
+      description: Последовательность действий, приводящая к ошибке.
+      placeholder: |
+        1. Запустить API
+        2. Отправить запрос ...
+        3. Получить ответ ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: Ожидаемый и фактический результат
+      description: Что должно было произойти и что произошло на самом деле.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Окружение
+      description: Версия .NET SDK, ОС, параметры запуска (Docker, локально).
+      value: |
+        - ОС: Windows / Linux / macOS
+        - .NET SDK: 9.0.x
+        - База данных: PostgreSQL 17 (Docker)
+    validations:
+      required: false
