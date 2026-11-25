@@ -12,7 +12,7 @@
 ## Реализация и архитектурный план
 
 ### Текущее состояние
-- Базовая структура солюшена на .NET 9 (`Domain`, `Application`, `Infrastructure`, `Api`, `Tests`).
+- Базовая структура солюшена на .NET 10 (`Domain`, `Application`, `Infrastructure`, `Api`, `Tests`).
 - Базовый эндпоинт мониторинга `/health`.
 - Конфигурация PostgreSQL 17 для локальной разработки в `docker-compose.yml`.
 - CI пайплайн (сборка, запуск тестов, проверка форматирования кода) в GitHub Actions.
@@ -27,7 +27,7 @@
 
 ## Стек технологий
 
-- .NET 9 (C# 13)
+- .NET 10 LTS (C# 14)
 - ASP.NET Core Web API
 - PostgreSQL 17 (локально через Docker Compose)
 - Entity Framework Core (запланировано)
@@ -36,7 +36,7 @@
 
 ## Требования к окружению
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (версия 9.0.x)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (версия 10.0.x)
 - Docker и Docker Compose
 - Git
 

@@ -35,7 +35,7 @@ body:
       description: Версия .NET SDK, ОС, параметры запуска (Docker, локально).
       value: |
         - ОС: Windows / Linux / macOS
-        - .NET SDK: 9.0.x
+        - .NET SDK: 10.0.x
         - База данных: PostgreSQL 17 (Docker)
     validations:
       required: false
