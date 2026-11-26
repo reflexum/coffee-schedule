@@ -1,4 +1,5 @@
 using CoffeeSchedule.Application.Abstractions;
+using CoffeeSchedule.Infrastructure.Authentication;
 using CoffeeSchedule.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,21 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString));
 
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+
+        var jwtSection = configuration.GetSection(JwtOptions.SectionName);
+        services.Configure<JwtOptions>(options =>
+        {
+            options.Issuer = jwtSection[nameof(JwtOptions.Issuer)] ?? options.Issuer;
+            options.Audience = jwtSection[nameof(JwtOptions.Audience)] ?? options.Audience;
+            options.SigningKey = jwtSection[nameof(JwtOptions.SigningKey)] ?? options.SigningKey;
+            if (int.TryParse(jwtSection[nameof(JwtOptions.LifetimeMinutes)], out var lifetime))
+            {
+                options.LifetimeMinutes = lifetime;
+            }
+        });
+
+        services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
         return services;
     }

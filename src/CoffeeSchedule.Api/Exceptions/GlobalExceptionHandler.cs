@@ -62,6 +62,11 @@ public sealed class GlobalExceptionHandler(
 
         var (statusCode, title, type, detail) = exception switch
         {
+            UnauthorizedException => (
+                StatusCodes.Status401Unauthorized,
+                "Ошибка аутентификации",
+                "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+                exception.Message),
             NotFoundException => (
                 StatusCodes.Status404NotFound,
                 "Ресурс не найден",

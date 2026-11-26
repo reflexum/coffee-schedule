@@ -8,7 +8,10 @@ public sealed record CreateEmployeeRequest(
     string Email,
     string Phone,
     Position Position,
-    Guid? PrimaryCoffeeShopId);
+    Guid? PrimaryCoffeeShopId,
+    string? Password = null);
+
+public sealed record SetPasswordRequest(string Password);
 
 public sealed record EmployeeResponse(
     Guid Id,
@@ -39,5 +42,19 @@ public sealed class CreateEmployeeRequestValidator : AbstractValidator<CreateEmp
 
         RuleFor(x => x.Position)
             .IsInEnum().WithMessage("Указана недопустимая должность.");
+
+        RuleFor(x => x.Password)
+            .MinimumLength(8).WithMessage("Пароль должен содержать минимум 8 символов.")
+            .When(x => !string.IsNullOrEmpty(x.Password));
+    }
+}
+
+public sealed class SetPasswordRequestValidator : AbstractValidator<SetPasswordRequest>
+{
+    public SetPasswordRequestValidator()
+    {
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Пароль обязателен.")
+            .MinimumLength(8).WithMessage("Пароль должен содержать минимум 8 символов.");
     }
 }

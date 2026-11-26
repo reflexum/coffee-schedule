@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeSchedule.Application.Employees;
 
-public sealed class EmployeeService(IAppDbContext dbContext)
+public sealed class EmployeeService(
+    IAppDbContext dbContext,
+    IPasswordHasherService passwordHasher)
 {
     public async Task<EmployeeResponse> CreateAsync(
         CreateEmployeeRequest request,
@@ -41,6 +43,11 @@ public sealed class EmployeeService(IAppDbContext dbContext)
             request.Phone,
             request.Position,
             request.PrimaryCoffeeShopId);
+
+        if (!string.IsNullOrWhiteSpace(request.Password))
+        {
+            employee.SetPasswordHash(passwordHasher.HashPassword(request.Password));
+        }
 
         dbContext.Employees.Add(employee);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -78,6 +85,19 @@ public sealed class EmployeeService(IAppDbContext dbContext)
         }
 
         employee.GrantShopAccess(coffeeShopId);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task SetPasswordAsync(
+        Guid employeeId,
+        SetPasswordRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var employee = await dbContext.Employees
+            .FirstOrDefaultAsync(x => x.Id == employeeId, cancellationToken)
+            ?? throw new NotFoundException($"Сотрудник '{employeeId}' не найден.");
+
+        employee.SetPasswordHash(passwordHasher.HashPassword(request.Password));
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

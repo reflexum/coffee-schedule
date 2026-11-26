@@ -1,6 +1,8 @@
+using CoffeeSchedule.Application.Auth;
 using CoffeeSchedule.Application.CoffeeShops;
 using CoffeeSchedule.Application.Employees;
 using CoffeeSchedule.Application.Preferences;
+using CoffeeSchedule.Application.Schedule;
 using CoffeeSchedule.Application.Shifts;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,10 +16,12 @@ public static class DependencyInjection
     {
         services.TryAddSingleton(TimeProvider.System);
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+        services.AddScoped<AuthService>();
         services.AddScoped<CoffeeShopService>();
         services.AddScoped<EmployeeService>();
         services.AddScoped<ShiftService>();
         services.AddScoped<PreferenceService>();
+        services.AddScoped<ScheduleService>();
         return services;
     }
 }

@@ -4,3 +4,23 @@ GET {{CoffeeSchedule.Api_HostAddress}}/health
 Accept: text/plain
 
 ###
+
+POST {{CoffeeSchedule.Api_HostAddress}}/api/v1/auth/bootstrap
+Content-Type: application/json
+
+{
+  "fullName": "Анна Управляющая",
+  "email": "manager@coffee.ru",
+  "phone": "+79990000001",
+  "password": "ManagerPassword123!"
+}
+
+###
+
+POST {{CoffeeSchedule.Api_HostAddress}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "manager@coffee.ru",
+  "password": "ManagerPassword123!"
+}

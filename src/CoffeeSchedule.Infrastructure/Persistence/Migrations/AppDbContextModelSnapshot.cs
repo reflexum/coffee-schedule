@@ -84,6 +84,10 @@ namespace CoffeeSchedule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("PasswordHash")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(32)
