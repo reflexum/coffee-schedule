@@ -33,7 +33,8 @@ public sealed record ShiftResponse(
     string? AssignedEmployeeName,
     ShiftStatus Status,
     string? Notes,
-    DateTimeOffset? PublishedAtUtc);
+    DateTimeOffset? PublishedAtUtc,
+    IReadOnlyList<string>? Warnings = null);
 
 public sealed record PublishScheduleResponse(
     Guid CoffeeShopId,

@@ -178,6 +178,48 @@ namespace CoffeeSchedule.Infrastructure.Persistence.Migrations
                     b.ToTable("shifts", (string)null);
                 });
 
+            modelBuilder.Entity("CoffeeSchedule.Domain.Entities.ShiftPreference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<TimeOnly?>("EndTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<TimeOnly?>("StartTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Date");
+
+                    b.HasIndex("EmployeeId", "Date");
+
+                    b.ToTable("shift_preferences", (string)null);
+                });
+
             modelBuilder.Entity("CoffeeSchedule.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("CoffeeSchedule.Domain.Entities.CoffeeShop", "PrimaryCoffeeShop")
@@ -223,6 +265,17 @@ namespace CoffeeSchedule.Infrastructure.Persistence.Migrations
                     b.Navigation("AssignedEmployee");
 
                     b.Navigation("CoffeeShop");
+                });
+
+            modelBuilder.Entity("CoffeeSchedule.Domain.Entities.ShiftPreference", b =>
+                {
+                    b.HasOne("CoffeeSchedule.Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("CoffeeSchedule.Domain.Entities.CoffeeShop", b =>
