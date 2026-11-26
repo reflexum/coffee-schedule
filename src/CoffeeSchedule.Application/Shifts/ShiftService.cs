@@ -31,6 +31,7 @@ public sealed class ShiftService(IAppDbContext dbContext)
             request.Notes);
 
         Employee? employee = null;
+        IReadOnlyList<string> warnings = [];
         if (request.AssignedEmployeeId.HasValue)
         {
             employee = await ValidateEmployeeAssignmentAsync(
@@ -41,12 +42,19 @@ public sealed class ShiftService(IAppDbContext dbContext)
                 shift.EndsAtUtc,
                 excludeShiftId: null,
                 cancellationToken);
+
+            warnings = await GetPreferenceConflictWarningsAsync(
+                employee.Id,
+                shop.TimeZoneId,
+                shift.StartsAtUtc,
+                shift.EndsAtUtc,
+                cancellationToken);
         }
 
         dbContext.Shifts.Add(shift);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return MapToResponse(shift, shop.Name, employee?.FullName);
+        return MapToResponse(shift, shop.Name, employee?.FullName, warnings);
     }
 
     public async Task<ShiftResponse> UpdateAsync(
@@ -63,6 +71,7 @@ public sealed class ShiftService(IAppDbContext dbContext)
         var endsAtUtc = request.EndsAt.ToUniversalTime();
 
         Employee? employee = null;
+        IReadOnlyList<string> warnings = [];
         if (request.AssignedEmployeeId.HasValue)
         {
             employee = await ValidateEmployeeAssignmentAsync(
@@ -72,6 +81,13 @@ public sealed class ShiftService(IAppDbContext dbContext)
                 startsAtUtc,
                 endsAtUtc,
                 excludeShiftId: shift.Id,
+                cancellationToken);
+
+            warnings = await GetPreferenceConflictWarningsAsync(
+                employee.Id,
+                shift.CoffeeShop.TimeZoneId,
+                startsAtUtc,
+                endsAtUtc,
                 cancellationToken);
         }
 
@@ -84,7 +100,7 @@ public sealed class ShiftService(IAppDbContext dbContext)
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return MapToResponse(shift, shift.CoffeeShop.Name, employee?.FullName);
+        return MapToResponse(shift, shift.CoffeeShop.Name, employee?.FullName, warnings);
     }
 
     public async Task<ShiftResponse> PublishAsync(
@@ -258,10 +274,70 @@ public sealed class ShiftService(IAppDbContext dbContext)
         return employee;
     }
 
+    private async Task<IReadOnlyList<string>> GetPreferenceConflictWarningsAsync(
+        Guid employeeId,
+        string timeZoneId,
+        DateTimeOffset startsAtUtc,
+        DateTimeOffset endsAtUtc,
+        CancellationToken cancellationToken)
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        var localStart = TimeZoneInfo.ConvertTime(startsAtUtc, timeZone);
+        var localEnd = TimeZoneInfo.ConvertTime(endsAtUtc, timeZone);
+
+        var startDate = DateOnly.FromDateTime(localStart.DateTime);
+        var endDate = DateOnly.FromDateTime(localEnd.DateTime);
+
+        var preferences = await dbContext.ShiftPreferences
+            .AsNoTracking()
+            .Where(x => x.EmployeeId == employeeId
+                        && x.Type == PreferenceType.Unavailable
+                        && x.Date >= startDate
+                        && x.Date <= endDate)
+            .ToListAsync(cancellationToken);
+
+        var warnings = new List<string>();
+        var shiftStartTime = TimeOnly.FromDateTime(localStart.DateTime);
+        var shiftEndTime = TimeOnly.FromDateTime(localEnd.DateTime);
+
+        foreach (var preference in preferences)
+        {
+            bool conflicts;
+            if (startDate == endDate)
+            {
+                conflicts = preference.ConflictsWithShift(shiftStartTime, shiftEndTime);
+            }
+            else if (preference.Date == startDate)
+            {
+                conflicts = preference.ConflictsWithShift(shiftStartTime, TimeOnly.MaxValue);
+            }
+            else if (preference.Date == endDate)
+            {
+                conflicts = shiftEndTime > TimeOnly.MinValue && preference.ConflictsWithShift(TimeOnly.MinValue, shiftEndTime);
+            }
+            else
+            {
+                conflicts = true;
+            }
+
+            if (conflicts)
+            {
+                var window = preference.StartTime.HasValue && preference.EndTime.HasValue
+                    ? $"{preference.StartTime.Value:HH:mm}–{preference.EndTime.Value:HH:mm}"
+                    : "весь день";
+                var commentPart = string.IsNullOrWhiteSpace(preference.Comment) ? string.Empty : $" ({preference.Comment})";
+                warnings.Add($"У сотрудника отмечена недоступность на {preference.Date:yyyy-MM-dd} ({window}){commentPart}.");
+            }
+        }
+
+        return warnings;
+    }
+
     private static ShiftResponse MapToResponse(
         Shift shift,
         string coffeeShopName,
-        string? assignedEmployeeName) =>
+        string? assignedEmployeeName,
+        IReadOnlyList<string>? warnings = null) =>
         new(
             shift.Id,
             shift.CoffeeShopId,
@@ -273,5 +349,6 @@ public sealed class ShiftService(IAppDbContext dbContext)
             assignedEmployeeName,
             shift.Status,
             shift.Notes,
-            shift.PublishedAtUtc);
+            shift.PublishedAtUtc,
+            warnings is { Count: > 0 } ? warnings : null);
 }

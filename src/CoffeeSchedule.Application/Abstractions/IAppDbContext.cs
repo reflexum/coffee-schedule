@@ -13,5 +13,7 @@ public interface IAppDbContext
 
     DbSet<Shift> Shifts { get; }
 
+    DbSet<ShiftPreference> ShiftPreferences { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
