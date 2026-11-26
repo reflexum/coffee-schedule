@@ -128,6 +128,56 @@ namespace CoffeeSchedule.Infrastructure.Persistence.Migrations
                     b.ToTable("employee_shop_accesses", (string)null);
                 });
 
+            modelBuilder.Entity("CoffeeSchedule.Domain.Entities.Shift", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AssignedEmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CoffeeShopId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("EndsAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTimeOffset?>("PublishedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RequiredPosition")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset>("StartsAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedEmployeeId", "StartsAtUtc", "EndsAtUtc");
+
+                    b.HasIndex("CoffeeShopId", "StartsAtUtc", "EndsAtUtc");
+
+                    b.ToTable("shifts", (string)null);
+                });
+
             modelBuilder.Entity("CoffeeSchedule.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("CoffeeSchedule.Domain.Entities.CoffeeShop", "PrimaryCoffeeShop")
@@ -155,6 +205,24 @@ namespace CoffeeSchedule.Infrastructure.Persistence.Migrations
                     b.Navigation("CoffeeShop");
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("CoffeeSchedule.Domain.Entities.Shift", b =>
+                {
+                    b.HasOne("CoffeeSchedule.Domain.Entities.Employee", "AssignedEmployee")
+                        .WithMany()
+                        .HasForeignKey("AssignedEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CoffeeSchedule.Domain.Entities.CoffeeShop", "CoffeeShop")
+                        .WithMany()
+                        .HasForeignKey("CoffeeShopId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AssignedEmployee");
+
+                    b.Navigation("CoffeeShop");
                 });
 
             modelBuilder.Entity("CoffeeSchedule.Domain.Entities.CoffeeShop", b =>
