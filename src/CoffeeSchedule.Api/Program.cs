@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using CoffeeSchedule.Api.Exceptions;
 using CoffeeSchedule.Api.Filters;
 using CoffeeSchedule.Application;
@@ -20,10 +21,15 @@ builder.Services.AddProblemDetails(options =>
 });
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<FluentValidationFilter>();
-});
+builder.Services
+    .AddControllers(options =>
+    {
+        options.Filters.Add<FluentValidationFilter>();
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<AppDbContext>("database", tags: ["ready"]);

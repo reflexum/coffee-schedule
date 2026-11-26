@@ -11,5 +11,7 @@ public interface IAppDbContext
 
     DbSet<EmployeeShopAccess> EmployeeShopAccesses { get; }
 
+    DbSet<Shift> Shifts { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
