@@ -29,6 +29,9 @@ internal sealed class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .HasConversion<string>()
             .HasMaxLength(32);
 
+        builder.Property(x => x.PasswordHash)
+            .HasMaxLength(500);
+
         builder.Property(x => x.IsActive)
             .IsRequired();
 

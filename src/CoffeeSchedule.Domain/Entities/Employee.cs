@@ -43,6 +43,8 @@ public sealed class Employee
 
     public Position Position { get; private set; }
 
+    public string? PasswordHash { get; private set; }
+
     public Guid? PrimaryCoffeeShopId { get; private set; }
 
     public CoffeeShop? PrimaryCoffeeShop { get; private set; }
@@ -107,6 +109,16 @@ public sealed class Employee
         }
 
         Position = newPosition;
+    }
+
+    public void SetPasswordHash(string passwordHash)
+    {
+        if (string.IsNullOrWhiteSpace(passwordHash))
+        {
+            throw new DomainException("Хэш пароля не может быть пустым.");
+        }
+
+        PasswordHash = passwordHash;
     }
 
     public void AssignPrimaryShop(Guid coffeeShopId, DateTimeOffset? assignedAtUtc = null)

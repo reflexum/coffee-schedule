@@ -19,6 +19,7 @@ public class ExceptionHandlingAndValidationTests
         return new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
             builder.UseEnvironment("Production");
+            builder.UseSetting("Jwt:SigningKey", "integration-tests-signing-key-32chars!");
             builder.ConfigureTestServices(services =>
             {
                 services.AddScoped<IValidator<TestValidationPayload>, TestValidationPayloadValidator>();

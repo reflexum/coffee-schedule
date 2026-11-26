@@ -1,9 +1,12 @@
 using CoffeeSchedule.Application.CoffeeShops;
+using CoffeeSchedule.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeSchedule.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/v1/shops")]
 public sealed class CoffeeShopsController(CoffeeShopService coffeeShopService) : ControllerBase
 {
@@ -22,6 +25,7 @@ public sealed class CoffeeShopsController(CoffeeShopService coffeeShopService) :
     }
 
     [HttpPost]
+    [Authorize(Roles = nameof(Position.Manager))]
     public async Task<ActionResult<CoffeeShopResponse>> Create(
         [FromBody] CreateCoffeeShopRequest request,
         CancellationToken cancellationToken)

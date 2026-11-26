@@ -23,6 +23,7 @@ public class ShiftsEndpointsTests : IAsyncLifetime
     {
         await _factory.InitializeAsync();
         _client = _factory.CreateClient();
+        await _factory.AuthenticateAsManagerAsync(_client);
     }
 
     public async Task DisposeAsync()
